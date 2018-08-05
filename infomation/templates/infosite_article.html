@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <title>Blog</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css"/>
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap.js"></script>
+    <style>
+			body {
+				background-color: #CCC;
+			}
+
+			#content {
+				background-color: white;
+				margin-top:2em;
+                padding-bottom:2em;
+                margin-bottom:2em;
+			}
+
+			.col-md-3 li a:hover {
+				color: black;
+			}
+
+			.col-md-3 li a {
+				border: 0px;
+				color: white;
+				border-radius: 0px;
+				margin-right: 0px;
+			}
+
+			.col-md-3 ul {
+				background-color: rgb(27, 27, 27);
+			}
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div id='content' class="container-fluid">
+        <div class='col-md-9'>
+
+            <h2>{{ article.title }}</h2>
+            {{ article.content }}
+
+            <button class="btn btn-success">点赞</button>
+            <hr>
+            <form role="form" action="{% url 'comment' id=article.id %}" method="get">
+                <div class="form-group">
+                    <label for="name">
+                        共{{ article.comments.all|length }}条评论
+                    </label>
+                    <input name="content" class="form-control" placeholder="请文明用语"/>
+                    {% csrf_token %}
+                </div>
+                <button type="submit" class="btn btn-success">评论</button>
+            </form>
+            {% for comm in article.comments.all %}
+                <p>{{ comm.user }}@{{ comm.content }}-----{{ forloop.counter }}楼</p>
+            {% endfor %}
+            <hr>
+        </div>
+        <div class="col-md-3">
+            <h2>推荐文章</h2>
+            <ul class="nav nav-tabs nav-stacked">
+                {% for article in article_by_grade %}
+                <li>
+                    <a href="{% url 'detail' id=article.id %}">{{ article.title }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+</div>
+</body>
+
+</html>

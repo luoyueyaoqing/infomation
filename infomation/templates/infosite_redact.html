@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>编辑页面</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css"/>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+    <style type="text/css">
+			body {
+				background-color: #CCC;
+                margin:2em 0em 2em 0em;
+			}
+			#content {
+				background-color: white;
+				margin-top:2em;
+                margin-bottom:2em;
+				padding-top:2em;
+				padding-bottom:2em;
+			}
+
+    </style>
+    <script>
+            function show_hidden(el){
+                $("#pabel-"+el).show()
+                $("#show-"+el).hide()
+                $("#hide-"+el).show()
+            };
+            function hidden_show(el){
+                $("#pabel-"+el).hide()
+                $("#show-"+el).show()
+                $("#hide-"+el).hide()
+            };
+    </script>
+</head>
+<body>
+<div id="content" class="container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {%if message.tags %} alert-{{ message.tags }}{% endif %}" role="alert">{{ message }}</div>
+        {% endfor %}
+    <hr/>
+    {% endif %}
+
+    {% for article in article_list %}
+    <div class="panel panel-default">
+        <div class="panel-body">
+            栏目：{{ article.column.title }} —— 标题：{{ article.title }}
+            <div class="button-group btn-group-xs" style="display: inline-block;float:right;">
+                <button id="show-{{ forloop.counter }}" class="btn btn-success" onclick="show_hidden({{ forloop.counter }})">显示</button>
+                <button id="hide-{{ forloop.counter }}" class="btn btn-success" onclick="hidden_show({{ forloop.counter }})" style="display: none">隐藏</button>
+                <a class="btn btn-info" href="{% url 'redact' id=article.id %}">编辑</a>
+                <a class="btn btn-danger" href="{% url 'delete_article' id=article.id %}">删除</a>
+            </div>
+        </div>
+        <div id="pabel-{{ forloop.counter }}" class="panel-footer" style="display: none;">{{ article.content|safe }}
+        </div>
+    </div>
+    {% endfor %}
+
+<div class="container">
+    <ul class="pagination" id="pager">
+        <!--{# 如果当前页有上一页#}-->
+        {% if article_list.has_previous %}
+            <li class="previous"><a href="/redact/?page={{ article_list.previous_page_number }}">上一页</a></li>
+        {% endif %}
+
+        <!--{# 当前页码开始#}-->
+        {% for num in paginator.page_range %}
+            {% if num == currentPage %}
+                <li class="item active"><a href="/redact/?page={{ num }}">{{ num }}</a></li>
+            {% else %}
+                <li class="item"><a href="/redact/?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        <!--{# 下一页按钮开始#}-->
+        {% if article_list.has_next %}
+            <li class="next"><a href="/redact/?page={{ article_list.next_page_number }}">下一页</a></li>
+        {% endif %}
+    </ul>
+</div>
+
+    <hr/>
+    <form role="form" method="post">
+        <div class="form-group">
+            <label for="name">文章标题</label>
+            <input name="title" class="form-control" value="{{ current_article.title }}" placeholder="请输入文章标题">
+        </div>
+        <div class="form-group">
+            <label for="name">文章正文</label>
+            <textarea name="content" class="form-control" rows="3"
+                      placeholder="请输入文章正文">{{ current_article.content }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="name">文章栏目</label>
+            <select name="column" class="form-control" rows="3">
+                {% for column in columns %}
+                <option value="{{ column.title }}" {% if forloop == 1 %} selected="selected" {% endif %}>
+                    {{ column.title }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        {% csrf_token %}
+        <button type="submit" class="btn btn-default">添加</button>
+
+    </form>
+</div>
+</body>
+</html>

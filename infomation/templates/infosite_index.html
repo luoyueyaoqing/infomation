@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <title>Blog</title>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <style>
+			body {
+				background-color: #CCC;
+			}
+			
+			#content {
+				background-color: white;
+				margin-top:2em;
+				padding-top:2em;
+			}
+			
+			.col-md-3 li a:hover {
+				color: black;
+			}
+			
+			.col-md-3 li a {
+				border: 0px;
+				color: white;
+				border-radius: 0px;
+				margin-right: 0px;
+			}
+			
+			.col-md-3 ul {
+				background-color: rgb(27, 27, 27);
+			}
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    {% if user.is_authenticated %}
+        <a href='{% url "logout" %}'>退出登录</a>
+        {% if user.identity == 'Redact' %}
+            <a href="{% url 'redact' id=None %}">编辑</a>
+        {% endif %}
+        <h3>welcome--{{ user}}</h3>
+    {% else %}
+        <a href="{% url 'register' %}">注册</a>
+        <br>
+        <a href="{% url 'login' %}">登录</a>
+    {% endif %}
+<hr>
+    <div id='content' class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="list-group">
+                    <a href="#" class="list-group-item active">
+                        最高阅读
+                    </a>
+                    {% for article in article_by_read %}
+                    <a href="{% url 'detail' id=article.id %}" class="list-group-item">{{ article.title }}<span class="badge">{{ article.read_num }}</span></a>
+                    {% endfor %}
+
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="list-group">
+                    <a href="" class="list-group-item active">
+                        最高点赞
+                    </a>
+
+                    {% for article in article_by_support %}
+                    <a href="{% url 'detail' id=article.id %}" class="list-group-item">{{ article.title }}<span class="badge">{{ article.support_num }}</span></a>
+                    {% endfor %}
+
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="list-group">
+                    <a href="#" class="list-group-item active">
+                        编辑推荐
+                    </a>
+                    {% for article in article_by_grade %}
+                    <a href="{% url 'detail' id=article.id %}" class="list-group-item">{{ article.title }}<span class="badge">{{ article.garde_num }}</span></a>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+
+</html>
