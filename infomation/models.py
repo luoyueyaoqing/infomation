@@ -9,7 +9,13 @@ class User(AbstractUser):
         ('Redact', 'Redact'),
         ('Manage', 'Manage')
     )
-    identity = models.CharField(choices=IDENTITY, default='Normal', max_length=12)
+    ATTITUDE = (
+        (-1, '反对'),
+        (0, ''),
+        (1, '赞成')
+    )
+    attitude = models.IntegerField(choices=ATTITUDE, default=0)
+    identity = models.CharField(choices=IDENTITY, default='Normal', max_length=6)
 
     def __str__(self):
         return self.username

@@ -45,9 +45,13 @@
         <div class='col-md-9'>
 
             <h2>{{ article.title }}</h2>
-            {{ article.content }}
-
-            <button class="btn btn-success">点赞</button>
+                {{ article.content }}
+    {% if user.attitude != 1 %}
+        <a href="{% url 'vote' id=article.id %}">点赞</a>
+    {% elif user.attitude == 1 %}
+        <a href="{% url 'unvote' id=article.id %}">取消</a>
+    {% endif %}
+            <!--<button class="btn btn-success">点赞</button>-->
             <hr>
             <form role="form" action="{% url 'comment' id=article.id %}" method="get">
                 <div class="form-group">

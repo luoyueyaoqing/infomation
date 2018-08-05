@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponseRedirect, redirect
+from django.shortcuts import render, HttpResponseRedirect, redirect, HttpResponse
 from .models import User, Article, Comment, ArticleColumn
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
@@ -129,3 +129,25 @@ def index_redact(request, id=None):
             current_article = None
         return render(request, 'infosite_redact.html',
 locals())
+
+
+@login_required
+def vote(request, id):
+    article = Article.objects.get(id=id)
+    if request.user.attitude != 1:
+        request.user.attitude = 1
+        request.user.save()
+        article.support_num += 1
+        article.save()
+    return redirect(to=detail, id=id)
+
+
+@login_required
+def unvote(request, id):
+    article = Article.objects.get(id=id)
+    if request.user.attitude != -1:
+        request.user.attitude = -1
+        request.user.save()
+        article.support_num -= 1
+        article.save()
+    return redirect(to=detail, id=id)
